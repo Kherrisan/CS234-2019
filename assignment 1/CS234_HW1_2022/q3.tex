@@ -1,0 +1,16 @@
+\begin{section}{Frozen Lake MDP [25 pts]}
+Now you will implement value iteration and policy iteration for the Frozen Lake environment
+from \href{"https://gym.openai.com/envs/FrozenLake-v0"}{OpenAI Gym}. We have provided
+custom versions of this environment in the starter code.
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{(coding)} Read through \texttt{vi\_and\_pi.py} and implement \texttt{policy\_evaluation}, \texttt{policy\_improvement} and \texttt{policy\_iteration}. The stopping tolerance (defined as $\max_s |V_{old}(s) - V_{new}(s)|$) is tol = $10^{-3}$
+. Use $\gamma = 0.9$. Return the optimal value function and the optimal policy. [10pts]
+\item \textbf{(coding)} Implement \texttt{value\_iteration} in \texttt{vi\_and\_pi.py}. The stopping tolerance is tol =
+$10^{-3}$
+. Use $\gamma = 0.9$. Return the optimal value function and the optimal policy. [10 pts]
+\item \textbf{(written)} Run both methods on the Deterministic-4x4-FrozenLake-v0 and
+
+Stochastic-4x4-FrozenLake-v0 environments. In the second environment, the dynamics of the world are stochastic. How does stochasticity affect the number of iterations required, and the resulting policy? [5 pts]
+
+\end{enumerate}
+\end{section}
