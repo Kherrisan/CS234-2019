@@ -1,19 +1,11 @@
 ### MDP Value Iteration and Policy Iteration
-import argparse
+
 import numpy as np
 import gym
 import time
 from lake_envs import *
 
 np.set_printoptions(precision=3)
-
-parser = argparse.ArgumentParser(description='A program to run assignment 1 implementations.',
-								formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-parser.add_argument("--env", 
-					help="The name of the environment to run your algorithm on.", 
-					choices=["Deterministic-4x4-FrozenLake-v0","Stochastic-4x4-FrozenLake-v0"],
-					default="Deterministic-4x4-FrozenLake-v0")
 
 """
 For policy_evaluation, policy_improvement, policy_iteration and value_iteration,
@@ -189,11 +181,10 @@ def render_single(env, policy, max_steps=100):
 # visualize the resulting policies in action!
 # You may change the parameters in the functions below
 if __name__ == "__main__":
-	# read in script argument
-	args = parser.parse_args()
-	
-	# Make gym environment
-	env = gym.make(args.env)
+
+	# comment/uncomment these lines to switch between deterministic/stochastic environments
+	env = gym.make("Deterministic-4x4-FrozenLake-v0")
+	# env = gym.make("Stochastic-4x4-FrozenLake-v0")
 
 	print("\n" + "-"*25 + "\nBeginning Policy Iteration\n" + "-"*25)
 
