@@ -5,3 +5,5 @@
 **/*.log
 **/*.out
 **/*.gz
+**/*temp.tex
+**/__pycache__

@@ -1,11 +1,14 @@
 ### MDP Value Iteration and Policy Iteration
 
+from sre_constants import RANGE
 import numpy as np
 import gym
 import time
 from lake_envs import *
 
 np.set_printoptions(precision=3)
+
+DETERMINISTIC_ENV = False
 
 """
 For policy_evaluation, policy_improvement, policy_iteration and value_iteration,
@@ -56,7 +59,18 @@ def policy_evaluation(P, nS, nA, policy, gamma=0.9, tol=1e-3):
 	############################
 	# YOUR IMPLEMENTATION HERE #
 
+	old_value_function = np.zeros(nS)
+	i = 0
 
+	while i == 0 or np.max(np.abs(value_function - old_value_function)) > tol:
+		i += 1
+		old_value_function = value_function.copy()
+		value_function = np.zeros(nS)
+		for s in range(nS):
+			for prob, next_state, reward, terminal in P[s][policy[s]]:
+				# V_new(s) = reward + gamma * P(s'|s, pi(s)) * V_old(s')
+				value_function[s] += prob * (reward + gamma * old_value_function[next_state])
+			
 	############################
 	return value_function
 
@@ -86,6 +100,12 @@ def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
 	############################
 	# YOUR IMPLEMENTATION HERE #
 
+	for s in range(nS):
+		Q_s = np.zeros(nA, dtype=float)
+		for a in range(nA):
+			for prob, next_state, reward, terminal in P[s][a]:
+				Q_s[a] += reward + gamma * prob * value_from_policy[next_state]
+		new_policy[s] = np.argmax(Q_s)
 
 	############################
 	return new_policy
@@ -109,11 +129,20 @@ def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3):
 	policy: np.ndarray[nS]
 	"""
 
-	value_function = np.zeros(nS)
-	policy = np.zeros(nS, dtype=int)
+	value_function = np.zeros(nS, dtype=int)
+	policy = np.random.randint(0, nA, size=nS)
+	old_policy = np.zeros(nS, dtype=int)
 
 	############################
 	# YOUR IMPLEMENTATION HERE #
+
+	while True:
+		offset = np.sum(np.abs(policy - old_policy))
+		if offset == 0:
+			break
+		old_policy = policy.copy()
+		value_function = policy_evaluation(P, nS, nA, policy, gamma, tol)
+		policy = policy_improvement(P, nS, nA, value_function, old_policy, gamma)
 
 
 	############################
@@ -138,10 +167,28 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3):
 	"""
 
 	value_function = np.zeros(nS)
+	old_value_function = value_function.copy()
 	policy = np.zeros(nS, dtype=int)
 	############################
 	# YOUR IMPLEMENTATION HERE #
 
+	i = 0
+	while i == 0 or np.max(np.abs(value_function - old_value_function)) > tol:
+		i += 1
+		old_value_function = value_function.copy()
+		for s in range(nS):
+			v_s = np.zeros(nA)
+			for a in range(nA):
+				for prob, next_state, reward, terminal in P[s][a]:
+					v_s[a] += prob * (reward + gamma * old_value_function[next_state])
+			value_function[s] = np.max(v_s)
+	
+	for s in range(nS):
+		Q_s = np.zeros(nA)
+		for a in range(nA):
+			for prob, next_state, reward, terminal in P[s][a]:
+				Q_s[a] += prob * (reward + gamma * old_value_function[next_state])
+		policy[s] = np.argmax(Q_s)
 
 	############################
 	return value_function, policy
@@ -183,7 +230,7 @@ def render_single(env, policy, max_steps=100):
 if __name__ == "__main__":
 
 	# comment/uncomment these lines to switch between deterministic/stochastic environments
-	env = gym.make("Deterministic-4x4-FrozenLake-v0")
+	env = gym.make(f"{'Deterministic' if DETERMINISTIC_ENV else 'Stochastic'}-4x4-FrozenLake-v0")
 	# env = gym.make("Stochastic-4x4-FrozenLake-v0")
 
 	print("\n" + "-"*25 + "\nBeginning Policy Iteration\n" + "-"*25)
